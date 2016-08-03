@@ -1,4 +1,4 @@
-package validation_test
+package validation_ginkgo_test
 
 import (
 	. "github.com/onsi/ginkgo"
