@@ -2,10 +2,9 @@ package validation_ginkgo_test
 
 import (
 	"ginkgo_examples/validation_ginkgo"
-
+	"errors"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"log"
 )
 
 type test_data struct {
@@ -13,27 +12,42 @@ type test_data struct {
 	greeting string
 }
 
-var tests = []test_data{
+var postests = []test_data{
 			{"12345678", "Hello, 12345678"},
 			{"SuperUserName","Hello, SuperUserName"},
 			{"Test This One", "Hello, Test This One"},
 		}
+var negtests = []test_data{
+			{"", ""},
+		}
 
 //Top-level container
 var _ = Describe("ValidationGinkgo", func() {
+	//Positive test cases
 	Describe("Positive tests - no errors should occure", func(){
-		for _, test_case := range tests {
-			greet := test_case.greeting
+		for _, test_case := range postests {
+			greeting := test_case.greeting
 			greet, err := validation_ginkgo.RegisterNewUsername(test_case.username)
 			Describe("Username", func(){
 				Context("longer than 8 chars and no restricted chars", func(){
 					It("should be legal", func(){
 						Expect(err).NotTo(HaveOccurred())
-						Expect(greet).To(Equal(greet))
+						Expect(greet).To(Equal(greeting))
 						})
 					})
 				})
 		}
 	})
-
+	//Negative test cases
+	Describe("Negative tests - should return empty string and an error", func(){
+		Describe("Empty username", func(){
+			Context("is shorter than 8 characters", func(){
+				It("should return error", func(){
+					greet, err := validation_ginkgo.RegisterNewUsername("")
+					Expect(err).To(Equal(errors.New("Your username should be longer than 8 characters")))
+					Expect(greet).To(BeEmpty())
+				})
+			})
+		})
+	})
 })
