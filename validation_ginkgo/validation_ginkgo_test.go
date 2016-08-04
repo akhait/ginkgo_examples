@@ -17,9 +17,6 @@ var postests = []test_data{
 			{"SuperUserName","Hello, SuperUserName"},
 			{"Test This One", "Hello, Test This One"},
 		}
-var negtests = []test_data{
-			{"", ""},
-		}
 
 //Top-level container
 var _ = Describe("ValidationGinkgo", func() {
@@ -40,6 +37,7 @@ var _ = Describe("ValidationGinkgo", func() {
 	})
 	//Negative test cases
 	Describe("Negative tests - should return empty string and an error", func(){
+		//Empty username
 		Describe("Empty username", func(){
 			Context("is shorter than 8 characters", func(){
 				It("should return error", func(){
@@ -49,5 +47,26 @@ var _ = Describe("ValidationGinkgo", func() {
 				})
 			})
 		})
+		//Short username
+		Describe("Short username", func(){
+			Context("is shorter than 8 characters", func(){
+				It("should return corresponding error", func(){
+					greet, err := validation_ginkgo.RegisterNewUsername("Short")
+					Expect(err).To(Equal(errors.New("Your username should be longer than 8 characters")))
+					Expect(greet).To(BeEmpty())
+				})
+			})
+		})
+		//Username with special characters
+		Describe("Username with ^, @, #, $, &", func(){
+			Context("contains special symbols", func(){
+				It("should return corresponding error", func(){
+					greet, err := validation_ginkgo.RegisterNewUsername("John#Doe")
+					Expect(err).To(Equal(errors.New("Do not use special characters in your username")))
+					Expect(greet).To(BeEmpty())
+				})
+			})
+		})
 	})
+
 })
